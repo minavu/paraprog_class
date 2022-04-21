@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Script for testing producer-consumer program (C++ version 2)
+#
+echo $pwd   
+echo "---------------------------"   
+echo ./prodcons2
+./prodcons2
+
+for i in 0 2 8 13 16 
+do  echo "---------------------------"   
+    echo ./prodcons2 $i
+    ./prodcons2 $i
+done
+exit 0

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Script for testing producer-consumer program (Java version 2)
+#
+echo $pwd   
+echo "---------------------------"   
+echo java ProdCons2
+java ProdCons2
+
+for i in 2 8 13 16 
+do  echo "---------------------------"   
+    echo java ProdCons2 $i
+    java ProdCons2 $i
+done
+exit 0

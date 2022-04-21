@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Script for testing producer-consumer program (Java version 3)
+#
+echo $pwd   
+echo "---------------------------"   
+echo java ProdCons3
+java ProdCons3
+
+for i in 0 2 5 8
+do  echo "---------------------------"   
+    echo java ProdCons3 $i
+    ./prodcons2 $i
+done
+
+for i in 4 10 
+do for j in 1 3 7 
+do echo "---------------------------"   
+    echo java ProdCons3 $i $j
+    java ProdCons3 $i $j
+done
+done
+exit 0
