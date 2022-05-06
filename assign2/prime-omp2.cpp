@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
     cout << "P must be greater than 0\n";
     exit(0);
   }
+  cout << "prime-omp2 (" << P << " threads) over [2.." << N << "] starting ...\n";
 
   auto start_time = chrono::steady_clock::now();
 
@@ -82,6 +83,6 @@ int main(int argc, char **argv) {
     sum += stats[i];
   }
   cout << "] = " + to_string(sum) + "\n";
-  cout << "prime-omp2 found " << totalPrimes << " primes in "
+  cout << "prime-omp2 (" << P << " threads) found " << totalPrimes << " primes in "
        << duration.count() << " ms \n";
 }

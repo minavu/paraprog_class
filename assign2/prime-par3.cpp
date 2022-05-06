@@ -49,11 +49,11 @@ int main(int argc, char **argv) {
   auto start_time = chrono::steady_clock::now();
   int sqrtN = sqrt(N);
 
+  stats = new int[P] {0};
   sieve = new int[sqrtN+1] {0};
   candidate = new bool[N+1];
   for (int i = 2; i <= N; i++)
     candidate[i] = true;
-  stats = new int[P+1] {0};
     
   vector<thread> workers(P);
   for (int i {0}; i < P; ++i) {
@@ -69,7 +69,6 @@ int main(int argc, char **argv) {
       lck.unlock();
       cvar.notify_all();
       ++totalPrimes;
-      ++stats[0];
       for (int j = i+i; j <= sqrtN; j += i) {
         candidate[j] = false;
       }
@@ -90,21 +89,18 @@ int main(int argc, char **argv) {
   auto end_time = chrono::steady_clock::now();
   auto duration = chrono::duration<double, std::milli> (end_time - start_time);
 
-  cout << "prime-par3 (" << P << " threads) found " << totalPrimes << " primes in "
-       << duration.count() << " ms \n";
-
-  cout << "Number of sieve primes: " + to_string(stats[0]) + "\n";
   int sum = 0;
   cout << "Stats are [";
-  for (int i = 1; i < P+1; ++i) {
+  for (int i = 0; i < P; ++i) {
     cout << to_string(stats[i]) + ",";
     sum += stats[i];
   }
   cout << "] = " + to_string(sum) + "\n";
+  cout << "prime-par3 (" << P << " threads) found " << totalPrimes << " primes in "
+       << duration.count() << " ms \n";
 }
 
 void worker(int k) {
-  cout << "Worker[" + to_string(k) + "] starting work\n";
   int low = sqrt(N)+1;
   int localIdx;
   do {
@@ -126,7 +122,7 @@ void worker(int k) {
       }
       lck.unlock();
       if (localIdx != -1) { //do work
-        ++stats[k+1];
+        ++stats[k];
         int starting = low / localIdx * localIdx;
         int remainder = low % localIdx;
         if (remainder) starting += localIdx;
@@ -140,5 +136,4 @@ void worker(int k) {
       lck.unlock();
     }
   } while (true);
-  cout << "Worker[" + to_string(k) + "] ending\n";
 }

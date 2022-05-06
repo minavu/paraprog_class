@@ -92,8 +92,6 @@ void worker(int k) {
   int high = (k+1) * sections + sqrtN;
   if (k == P-1) high = N;
 
-  cout << "Worker[" + to_string(k) + "] starting work on section [" + to_string(low) + "..." + to_string(high) + "]\n";
-
   for (int i {low}; i <= high; ++i)
     candidate[i] = true;
 
