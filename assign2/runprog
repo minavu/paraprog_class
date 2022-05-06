@@ -1,0 +1,57 @@
+#!/bin/bash
+
+if [ "$#" -lt 2 ]
+then
+  echo "Usage: ./runprog <program_name> <output_file>"
+  exit 1
+fi
+
+for lastarg; do true; done
+
+OUT_FILE=$lastarg
+NFIRST=1000
+NLAST=1000000
+PFIRST=1
+PLAST=128
+
+while [ $1 != $lastarg ]
+do
+  echo "------------------------------------------------------------" >> $OUT_FILE
+
+  if [ "$1" = "prime" ]
+  then
+    echo "./$1 N=[$NFIRST...$NLAST] by 10x" >> $OUT_FILE
+    printf "\n  Primes | Time (ms) | N\n" >> $OUT_FILE
+    echo "  ------ | --------- | -------" >> $OUT_FILE
+    n=$NFIRST
+    while [ $n -le $NLAST ]
+    do
+      output=$($1 $n | grep -oP "(\b\d+\b(?= primes))|(\d\.\d{1,6})")
+      split=($output)
+      primes=${split[0]}
+      mstime=${split[1]}
+      printf "  %6d | %9f | %-7d\n" $primes $mstime $n >> $OUT_FILE
+      n=$(( $n * 10 ))
+    done
+  else
+    echo "./$1 N=[$NFIRST...$NLAST] by 10x and P=[$PFIRST...$PLAST] by 2x" >> $OUT_FILE
+    for (( n = $NFIRST; n <= $NLAST; n *= 10 ))
+    do
+      printf "\n  Primes | Time (ms) | N       | P\n" >> $OUT_FILE
+      echo "  ------ | --------- | ------- | ---" >> $OUT_FILE
+      for (( p = $PFIRST; p <= $PLAST; p *= 2 ))
+      do
+        output=$($1 $n $p | grep -oP "(\b\d+\b(?= primes))|(\d\.\d{1,6})")
+        split=($output)
+        primes=${split[0]}
+        mstime=${split[1]}
+        printf "  %6d | %9f | %-7d | %-3d\n" $primes $mstime $n $p >> $OUT_FILE
+      done
+    done
+  fi
+
+  echo "------------------------------------------------------------" >> $OUT_FILE
+  shift 1
+done
+
+exit 0
