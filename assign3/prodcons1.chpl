@@ -8,11 +8,17 @@ use cqueue;
 config const numItems = 32;
 
 proc producer() { 
-  // ... fill ...
+  for i in 1..numItems {
+    var idx = cqueue.add(i);
+    writef("Producer added %i to buf[%i]\n", i, idx);
+  }
 }
 
 proc consumer() { 
-  // ... fill ...
+  for i in 1..numItems {
+    var pair = cqueue.remove();
+    writef("Consumer rem'd %i from buf[%i]\n", pair[1], pair[0]);
+  }
 }
 
 proc main() {

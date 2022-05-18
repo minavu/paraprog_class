@@ -41,7 +41,7 @@ void verify_array(int *a, int n) {
       printf("FAILED: a[%d]=%d, a[%d]=%d\n", i, a[i], i+1, a[i+1]);
       return;
     }
-  printf("%d element array is sorted.", n);  
+  printf("%d element array is sorted.\n", n);  
 }
 
 // Swap two elments
@@ -57,10 +57,10 @@ void oddeven_sort(int *a, int n) {
   for (int t = 1; t <= (n+1)/2; t++) {
     for (int i = 0; i < n-1; i += 2)      // even phase
       if (a[i] > a[i+1]) 
-	swap(&(a[i]), &(a[i+1]));
+        swap(&(a[i]), &(a[i+1]));
     for (int i = 1; i < n-1; i += 2)      // odd phase
       if (a[i] > a[i+1])
-	swap(&(a[i]), &(a[i+1]));
+        swap(&(a[i]), &(a[i+1]));
 #ifdef DEBUG
     printf("t=%d:  ", t);
     print_array(a, n);
