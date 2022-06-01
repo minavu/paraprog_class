@@ -2,11 +2,12 @@
 // Program code for CS 415P/515 Parallel Programming, Portland State University
 //----------------------------------------------------------------------------- 
 
-// Bucket sort (sequential version)
+// Bucket sort from file (sequential version)
 //
 // Usage: 
-//   linux> ./bsort B [N]   
+//   linux> ./bsort-file B <infile> <outfile>
 //   -- B (#buckets) must be a power of 2; B defaults to 10
+//   -- use B buckets to sort data in <infile> and write result to <outfile>
 // 
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,23 +27,6 @@ void print_array(int *a, int n) {
   for (int i = 0; i < n; i++)
     printf("%4d ", a[i]);
   printf("\n");
-}
-
-// Initialize array with random 13-bit int values
-// (except if WORST flag is on, set array to the reverse of 1..N)
-void init_array(int *a, int n) {
-#ifdef WORST
-  for (int i = 0; i < n; i++)
-    a[i] = n - i + 1;
-#else
-  srand(time(NULL));
-  for (int i = 0; i < n; i++)
-    a[i] = rand() % 8192;
-#endif  
-#ifdef DEBUG
-  printf("Init (%d elements): ", n);
-  print_array(a, n);
-#endif
 }
 
 // Verify that array is sorted (and report error if exits)
@@ -104,8 +88,8 @@ void bucket_sort(int *a, int n, int num_buckets) {
 // Main routine 
 // 
 int main(int argc, char **argv) {
-  if (argc < 2) {
-    printf("Usage: ./bsort B [N]\n");
+  if (argc < 4) {
+    printf("Usage: ./bsort-file B <infile> <outfile> (B must be a power of 2)\n");
     exit(0);
   }
 
@@ -114,24 +98,30 @@ int main(int argc, char **argv) {
     printf("B (#buckets) must be a power of 2\n");
     exit(0);
   }
+
+  FILE *fin = fopen(argv[2], "rb");
+  FILE *fout = fopen(argv[3], "wb");
   
-  int N = 10;             // N defaults to 10
-  if (argc == 3) {        // get param B, verify it's a power of 2
-    if ((N = atoi(argv[2])) < 1) {
-      printf("N must be positive, use default value of 10\n");
-      N = 10; 
-    }
+  fseek(fin, 0L, SEEK_END);
+  int N = ftell(fin) / sizeof(int);
+  if (N == 0) {
+    printf("%s contains no data\n", argv[2]);
+    exit(0);
   }
 
-  // initialize data array
+  rewind(fin);
   int a[N];
-  init_array(a, N);     
-
+  fread(a, sizeof(int), N, fin);
   bucket_sort(a, N, B);
+
+  fwrite(a, sizeof(int), N, fout);
 
 #ifdef DEBUG
   printf("Result: ");
   print_array(a, N);
 #endif
   verify_array(a, N);
+
+  fclose(fin);
+  fclose(fout);
 }
